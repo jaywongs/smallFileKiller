@@ -51,9 +51,11 @@ public class ScanFileStart {
 
     static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(Integer.valueOf(SCAN_THREAD_NUMS));
 
+    //扫描FTP_DIR
     public static void scanFile() {
         for (String prefix : PreList) {
             List<String> DirList = new ArrayList<String>();
+            //正则只扫描类似bj123_fdr格式的文件夹
             String regex = prefix + "\\d{3}" + "_fdr";
             Pattern p = Pattern.compile(regex);
             DirList = ScanFileUtil.scanFile(FTP_DIR, p);
@@ -62,6 +64,7 @@ public class ScanFileStart {
                 File[] tempList = parentfile.listFiles();
                 for (File file : tempList) {
                     String destPath = FTP_DIR + "/" + prefix;
+                    //多线程验证压缩文件是否合法，并移动至所属城市文件夹下
                     fixedThreadPool.execute(new VerifyThread(file.getAbsolutePath(), destPath, prefix));
                 }
             }

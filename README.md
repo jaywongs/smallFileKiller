@@ -1,0 +1,15 @@
+
+程序有三个入口：createTableStart、ScanFileStart和TarFileStart
+
+其中createTableStart为建表，提前一天建好所需表格。
+
+ScanFileStart为循环进程，扫描文件夹bjxxx_fdr中所有txt.gz，验证后置入新建的bj中。
+
+TarFileStart为循环进程，scanFile方法扫描城市内文件将文件list传给tarProcess生成
+.tar文件,tar文件为直接拼接在HDFS上。每一个companyHourID生成一个Tar，每生成一个
+part同时生成一个index文件。
+
+
+TarFileSystem继承FileSystem，功能与HarFileSystem功能基本一致。首先读取所有index，
+读取index中拼接part文件的源文件信息存入名为archive的hashMap中，包括源文件所在part、
+start、length，之后读取源文件信息全部从该archive中获取。

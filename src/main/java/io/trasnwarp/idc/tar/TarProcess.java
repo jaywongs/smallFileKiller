@@ -59,22 +59,21 @@ public class TarProcess {
 
     ExecutorService fixedThreadPool = Executors.newFixedThreadPool(TAR_THREAD_NUMS);
 
-    //根据companyhourid计算part并执行生成part操作
+    //根据companyhourid计算part
     public void calculatePart() throws Exception {
         String desPath = DFS_DIR + "/" + citykey + "/";
         AtlerPartition atlerPartition = new AtlerPartition();
         Map<String, List<String>> fileMap = ScanFileUtil.fileClassify(list);
         for (String key : fileMap.keySet()) { //key:companyhourid
-            String harPathStr = desPath + key + ".tar";
+            String tarPathStr = desPath + key + ".tar";
             FileSystem fs = FileSystem.get(conf);
-            Path harPath = new Path(harPathStr);
-            if (!fs.exists(harPath)){
-                fs.mkdirs(harPath);
+            Path tarPath = new Path(tarPathStr);
+            if (!fs.exists(tarPath)){
+                fs.mkdirs(tarPath);
             }
             //由于建表操作是提前处理的，此处未考虑表不存在的情况
-            atlerPartition.AddID(citykey+key.substring(0,8),key.substring(10,15),key.substring(8,10),harPathStr);
+            atlerPartition.AddID(citykey+key.substring(0,8),key.substring(10,15),key.substring(8,10),tarPathStr);
             List<String> fileList = fileMap.get(key);
-            System.out.println(fileList);
             File[] fileArr = ScanFileUtil.transArr(fileList);
             int partID = 0;
             ArrayList fileSubArr = new ArrayList<File>();
@@ -85,14 +84,16 @@ public class TarProcess {
                     fileSubArr.add(fileArr[i]);
                 } else {
                     addedSize = fileArr[i].length();
-                    fixedThreadPool.execute(new TarThread(ScanFileUtil.transFileArr(fileSubArr), key, String.valueOf(partID), harPathStr, citykey));
+                    fixedThreadPool.execute(new TarThread(ScanFileUtil.transFileArr(fileSubArr), key, String.valueOf(partID),
+                            tarPathStr, citykey)); //多线程执行生成part
                     partID++;
                     fileSubArr = new ArrayList<File>();
                     fileSubArr.add(fileArr[i]);
                 }
             }
             if (addedSize != 0) {
-                fixedThreadPool.execute(new TarThread(ScanFileUtil.transFileArr(fileSubArr), key, String.valueOf(partID), harPathStr, citykey));
+                fixedThreadPool.execute(new TarThread(ScanFileUtil.transFileArr(fileSubArr), key, String.valueOf(partID),
+                        tarPathStr, citykey));
             }
         }
     }

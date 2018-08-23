@@ -42,12 +42,14 @@ public class TarFileStart {
     }
 
     public void tarFile() throws Exception {
+        //扫描FTP下城市文件夹内文件，传给TarProcess处理
         for (String prefix : PreList) {
             List<String> DirList = new ArrayList<String>();
             Pattern p1 = Pattern.compile(prefix);
             DirList = ScanFileUtil.scanFile(FTP_DIR, p1);
             for (String filePath : DirList) {
                 File parentfile = new File(filePath);
+                //正则：只要符合规则的txt.gz
                 Pattern p2 = Pattern.compile("\\d{24}\\.txt\\.gz");
                 List<String> subFileList = ScanFileUtil.scanFile(parentfile.getAbsolutePath(), p2);
                 ArrayList<String> finishList = new ArrayList<String>();

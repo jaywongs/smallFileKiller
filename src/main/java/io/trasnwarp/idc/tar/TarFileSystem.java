@@ -380,8 +380,8 @@ public class TarFileSystem extends FileSystem {
                     return;
             }
         }
-        throw new IllegalArgumentException("Wrong FS: "+path+
-                ", expected: "+this.getUri());
+        throw new IllegalArgumentException("Wrong FS: " + path +
+                ", expected: " + this.getUri());
     }
 
     public Configuration getConf() {

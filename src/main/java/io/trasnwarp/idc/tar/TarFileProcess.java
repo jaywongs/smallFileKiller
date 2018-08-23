@@ -45,13 +45,13 @@ public class TarFileProcess {
         return tmp.hashCode();
     }
 
-    public static void genPart(File[] fileArr, String partID, String harPathStr) throws IOException {
+    public static void genPart(File[] fileArr, String partID, String tarPathStr) throws IOException {
         FileSystem fs = FileSystem.get(conf);
-        Path harPath = new Path(harPathStr);
+        Path tarPath = new Path(tarPathStr);
         FsPermission permission = new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL);
-        fs.setPermission(harPath, permission);
+        fs.setPermission(tarPath, permission);
         String fullPartName = System.currentTimeMillis() + "-part-" + partID;
-        String partPath = harPathStr + "/" + fullPartName;
+        String partPath = tarPathStr + "/" + fullPartName;
         FSDataOutputStream partFileStream = fs.create(new Path(URI.create(partPath)));
 
         //index文件头
@@ -63,7 +63,7 @@ public class TarFileProcess {
 
         for (int i = 0; i < fileArr.length; i++) {
             File curFile = fileArr[i];
-            //index文件信息
+            //保存所需index文件信息
             sb.append(String.valueOf(curFile.getName()) + " ");
             String relPath = "/" + curFile.getName();
             int curKey = TarFileProcess.getHashCode(relPath);

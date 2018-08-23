@@ -16,8 +16,11 @@ public class AtlerPartition {
         try {
             conn = jd.connection();
             Statement stmt = conn.createStatement();
-            // String sql = "alter table " + tablename + " add if not exists partition(company_id=" + ID + "," + "hour_id=" + HH + ")location \'tar:///"+locationPath+"/\';";
-            String sql = "alter table " + tablename + " add if not exists partition(company_id=" + ID + "," + "hour_id=" + HH + ");";
+            //测试完成后location位置为tar文件内
+//            String sql = "alter table " + tablename + " add if not exists partition(company_id=" + ID + "," +
+//                    "hour_id=" + HH + ")location \'tar:///"+locationPath+"/\';";
+            String sql = "alter table " + tablename + " add if not exists partition(company_id=" + ID + "," +
+                    "hour_id=" + HH + ");";
             log.info(sql);
             stmt.execute(sql);
             stmt.close();
