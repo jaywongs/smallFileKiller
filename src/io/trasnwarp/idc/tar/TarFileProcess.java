@@ -23,18 +23,18 @@ public class TarFileProcess {
     static {
         try {
             conf = new Configuration();
-            Properties prop = FileUtil.getConfig("io.trasnwarp.idc.ftp.properties");
+            Properties prop = FileUtil.getConfig("ftp.properties");
             HDFS_CONF_PATH = prop.getProperty("HDFS_CONF_PATH");
             BUF_SIZE = Integer.parseInt(prop.getProperty("BUF_SIZE"));
             if (HDFS_CONF_PATH.isEmpty()) {
                 System.err.println("Please set property \"HDFS_CONF_PATH\" at least");
                 System.exit(1);
             } else {
-                Path c = new Path(HDFS_CONF_PATH + "io.trasnwarp.idc.hdfs-site.xml");
+                Path c = new Path(HDFS_CONF_PATH + "hdfs-site.xml");
                 Path h = new Path(HDFS_CONF_PATH + "core-site.xml");
                 conf.addResource(c);
                 conf.addResource(h);
-                conf.set("fs.io.trasnwarp.idc.hdfs.impl", "org.apache.hadoop.io.trasnwarp.idc.hdfs.DistributedFileSystem");
+                conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
                 conf.set("fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem");
             }
             if (BUF_SIZE <= 0) {
@@ -53,12 +53,9 @@ public class TarFileProcess {
         return tmp.hashCode();
     }
 
-    public static void genPart(File[] fileArr, String key, String partID, String harPathStr) throws IOException {
+    public static void genPart(File[] fileArr, String partID, String harPathStr) throws IOException {
         FileSystem fs = FileSystem.get(conf);
         Path harPath = new Path(harPathStr);
-        if (!fs.exists(harPath)){
-            fs.mkdirs(harPath);
-        }
         FsPermission permission = new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL);
         fs.setPermission(harPath, permission);
         String fullPartName = System.currentTimeMillis() + "-part-" + partID;

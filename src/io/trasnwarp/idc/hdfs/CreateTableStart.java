@@ -25,7 +25,7 @@ public class CreateTableStart {
 
     static {
         try {
-            Properties prop = FileUtil.getConfig("io.trasnwarp.idc.ftp.properties");
+            Properties prop = FileUtil.getConfig("ftp.properties");
             PROV_PREFIX = prop.getProperty("PROV_PREFIX");
             PARTITION_KEY = prop.getProperty("PARTITION_KEY");
             COL_NAME_TYPE = prop.getProperty("COL_NAME_TYPE");

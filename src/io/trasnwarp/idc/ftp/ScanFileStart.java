@@ -21,7 +21,7 @@ public class ScanFileStart {
 
     static {
         try {
-            Properties prop = FileUtil.getConfig("io.trasnwarp.idc.ftp.properties");
+            Properties prop = FileUtil.getConfig("ftp.properties");
             FTP_DIR = prop.getProperty("FTP_DIR");
             if (FTP_DIR.isEmpty()) {
                 System.err.println("Please set property \"FTP_DIR\" at least");

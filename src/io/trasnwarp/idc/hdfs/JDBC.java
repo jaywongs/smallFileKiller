@@ -18,7 +18,7 @@ public class JDBC {
 
     static {
         try {
-            Properties prop = FileUtil.getConfig("io.trasnwarp.idc.ftp.properties");
+            Properties prop = FileUtil.getConfig("ftp.properties");
             INCEPTOR_SERVER_PORT = prop.getProperty("INCEPTOR_SERVER_PORT");
             INCEPTOR_USER = prop.getProperty("INCEPTOR_USER");
             INCEPTOR_PARAM = prop.getProperty("INCEPTOR_PARAM");
