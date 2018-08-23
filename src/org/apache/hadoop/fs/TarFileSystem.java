@@ -17,7 +17,7 @@ import java.util.*;
 
 public class TarFileSystem extends FileSystem {
 
-    public static final String METADATA_CACHE_ENTRIES_KEY = "fs.io.trasnwarp.idc.tar.metadatacache.entries";
+    public static final String METADATA_CACHE_ENTRIES_KEY = "tar.metadatacache.entries";
     public static final int METADATA_CACHE_ENTRIES_DEFAULT = 10;
 
     private static Map<URI, TarMetaData> tarMetaCache;
@@ -254,7 +254,7 @@ public class TarFileSystem extends FileSystem {
 
     @Override
     public String getScheme() {
-        return "io/trasnwarp/idc/tar";
+        return "tar";
     }
 
     public TarFileSystem(FileSystem fs) {
@@ -362,7 +362,7 @@ public class TarFileSystem extends FileSystem {
         Path retPath = null;
         Path tmp = p;
         for (int i = 0; i < p.depth(); i++) {
-            if (tmp.toString().endsWith(".io.trasnwarp.idc.tar")) {
+            if (tmp.toString().endsWith(".tar")) {
                 retPath = tmp;
                 break;
             }

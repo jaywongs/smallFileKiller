@@ -23,7 +23,7 @@ public class TarThread implements Runnable {
     @Override
     public void run() {
         try {
-            TarFileProcess.genPart(fileArr, key, partID, harPath);
+            TarFileProcess.genPart(fileArr, partID, harPath);
             for (File file : fileArr) {
                 BakFileUtil.bakFile(file,citykey);
             }
