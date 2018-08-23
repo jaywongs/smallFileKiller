@@ -1,6 +1,6 @@
 package io.trasnwarp.idc.test;
 
-import io.trasnwarp.idc.hdfs.AtlerPartition;
+import io.trasnwarp.idc.tar.TarFileSystem;
 import io.trasnwarp.idc.util.FileUtil;
 import io.trasnwarp.idc.util.VerifyIllegalUtil;
 import org.apache.hadoop.conf.Configuration;
@@ -56,7 +56,7 @@ public class TestUtil {
     public void testTarFile() throws Exception {
         URI uri = URI.create("tar:///user/wsj/data/bj/201806102011028.tar");
         FileSystem fs = FileSystem.get(conf);
-        TarFileSystem tf = new TarFileSystem(fs);
+        TarFileSystem tf = new TarFileSystem();
         tf.initialize(uri, conf);
         Path tarPath = new Path("tar:///user/wsj/data/bj/201806102011028.tar");
         FileStatus fileStatus = tf.getFileStatus(tarPath);
@@ -72,7 +72,7 @@ public class TestUtil {
     public void testTarFileReadSingle() throws Exception {
         URI uri = URI.create("tar:///user/wsj/data/bj/201806102011028.tar/201806102049341010711028.txt.gz");
         FileSystem fs = FileSystem.get(conf);
-        TarFileSystem tf = new TarFileSystem(fs);
+        TarFileSystem tf = new TarFileSystem();
         tf.initialize(uri, conf);
         Path tarPath = new Path("tar:///user/wsj/data/bj/201806102011028.tar/201806102049341010711028.txt.gz");
         FSDataInputStream in =  tf.open(tarPath);
