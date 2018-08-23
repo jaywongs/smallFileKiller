@@ -1,6 +1,5 @@
-package io.trasnwarp.idc.test;
+package io.trasnwarp.idc.hdfs;
 
-import io.trasnwarp.idc.hdfs.JDBC;
 import io.trasnwarp.idc.util.BakFileUtil;
 import io.trasnwarp.idc.util.FileUtil;
 import org.apache.log4j.Logger;

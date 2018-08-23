@@ -80,6 +80,7 @@ public class TarProcess {
             if (!fs.exists(harPath)){
                 fs.mkdirs(harPath);
             }
+            //由于建表操作是提前处理的，此处未考虑表不存在的情况
             atlerPartition.AddID(citykey+key.substring(0,8),key.substring(10,15),key.substring(8,10),harPathStr);
             List<String> fileList = fileMap.get(key);
             System.out.println(fileList);
