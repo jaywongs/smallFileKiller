@@ -1,6 +1,7 @@
-package org.apache.hadoop.fs;
+package io.trasnwarp.idc.tar;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.Text;
@@ -17,7 +18,7 @@ import java.util.*;
 
 public class TarFileSystem extends FileSystem {
 
-    public static final String METADATA_CACHE_ENTRIES_KEY = "fs.io.trasnwarp.idc.tar.metadatacache.entries";
+    public static final String METADATA_CACHE_ENTRIES_KEY = "tar.metadatacache.entries";
     public static final int METADATA_CACHE_ENTRIES_DEFAULT = 10;
 
     private static Map<URI, TarMetaData> tarMetaCache;
@@ -254,12 +255,12 @@ public class TarFileSystem extends FileSystem {
 
     @Override
     public String getScheme() {
-        return "io/trasnwarp/idc/tar";
+        return "tar";
     }
 
     public TarFileSystem(FileSystem fs) {
         this.fs = fs;
-        this.statistics = fs.statistics;
+        this.statistics = fs.getStatistics(getScheme(), this.getClass());
     }
 
     private synchronized void initializeMetadataCache(Configuration conf) {
@@ -321,7 +322,7 @@ public class TarFileSystem extends FileSystem {
         if (i < 0) {
             throw new IOException("URI: " + rawURI
                     + " is an invalid Tar URI since '-' not found."
-                    + "  Expecting io.trasnwarp.idc.tar://<scheme>-<host>/<path>.");
+                    + "  Expecting tar://<scheme>-<host>/<path>.");
         }
 
         if (rawURI.getQuery() != null) {
@@ -350,9 +351,38 @@ public class TarFileSystem extends FileSystem {
 
     @Override
     protected void checkPath(Path path) {
-        fs.checkPath(path);
+        URI uri = path.toUri();
+        String thatScheme = uri.getScheme();
+        if (thatScheme == null)                // fs is relative
+            return;
+        URI thisUri = getCanonicalUri();
+        String thisScheme = thisUri.getScheme();
+        //authority and scheme are not case sensitive
+        if (thisScheme.equalsIgnoreCase(thatScheme)) {// schemes match
+            String thisAuthority = thisUri.getAuthority();
+            String thatAuthority = uri.getAuthority();
+            if (thatAuthority == null &&                // path's authority is null
+                    thisAuthority != null) {                // fs has an authority
+                URI defaultUri = getDefaultUri(getConf());
+                if (thisScheme.equalsIgnoreCase(defaultUri.getScheme())) {
+                    uri = defaultUri; // schemes match, so use this uri instead
+                } else {
+                    uri = null; // can't determine auth of the path
+                }
+            }
+            if (uri != null) {
+                // canonicalize uri before comparing with this fs
+                uri = canonicalizeUri(uri);
+                thatAuthority = uri.getAuthority();
+                if (thisAuthority == thatAuthority ||       // authorities match
+                        (thisAuthority != null &&
+                                thisAuthority.equalsIgnoreCase(thatAuthority)))
+                    return;
+            }
+        }
+        throw new IllegalArgumentException("Wrong FS: "+path+
+                ", expected: "+this.getUri());
     }
-
 
     public Configuration getConf() {
         return fs.getConf();
@@ -362,7 +392,7 @@ public class TarFileSystem extends FileSystem {
         Path retPath = null;
         Path tmp = p;
         for (int i = 0; i < p.depth(); i++) {
-            if (tmp.toString().endsWith(".io.trasnwarp.idc.tar")) {
+            if (tmp.toString().endsWith(".tar")) {
                 retPath = tmp;
                 break;
             }
